@@ -66,23 +66,41 @@
     <script>
       // Poll for status every 2 seconds
       function checkStatus() {
-        fetch('/status')
-          .then(response => response.json())
-          .then(data => {
-            if (data.status === "completed") {
-              window.location.href = "/final";
-            } else if (data.status === "failed") {
-              document.getElementById("status-message").textContent = "Error processing image. Please try again with a different image.";
-              document.getElementById("loadingcircles").style.display = "none";
-            } else {
-              // Still processing, check again in 2 seconds
+        // Get the current URL path without credentials
+        const currentPath = window.location.pathname;
+        const statusPath = currentPath.substring(0, currentPath.lastIndexOf('/')) + '/status';
+        
+        // Use XMLHttpRequest instead of fetch to handle credentials properly
+        const xhr = new XMLHttpRequest();
+        xhr.open('GET', statusPath);
+        xhr.onload = function() {
+          if (xhr.status === 200) {
+            try {
+              const data = JSON.parse(xhr.responseText);
+              if (data.status === "completed") {
+                // Redirect to final page
+                window.location.href = currentPath.substring(0, currentPath.lastIndexOf('/')) + '/final';
+              } else if (data.status === "failed") {
+                document.getElementById("status-message").textContent = "Error processing image. Please try again with a different image.";
+                document.getElementById("loadingcircles").style.display = "none";
+              } else {
+                // Still processing, check again in 2 seconds
+                setTimeout(checkStatus, 2000);
+              }
+            } catch (e) {
+              console.error('Error parsing status response:', e);
               setTimeout(checkStatus, 2000);
             }
-          })
-          .catch(error => {
-            console.error('Error checking status:', error);
+          } else {
+            console.error('Error checking status, status code:', xhr.status);
             setTimeout(checkStatus, 2000);
-          });
+          }
+        };
+        xhr.onerror = function() {
+          console.error('Network error checking status');
+          setTimeout(checkStatus, 2000);
+        };
+        xhr.send();
       }
       
       // Start checking status when page loads
