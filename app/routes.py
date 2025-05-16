@@ -1,5 +1,5 @@
 from flask import make_response, render_template, request, send_from_directory, send_file, redirect
-from werkzeug import secure_filename
+from werkzeug.utils import secure_filename
 from app import app
 import sys
 sys.path.append("..")
