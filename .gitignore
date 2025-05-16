@@ -1,0 +1,20 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Facial landmark model file (large binary)
+shape_predictor_68_face_landmarks.dat
+
+# Uploaded and processed images
+app/images/*
+!app/images/.gitkeep
+
+# Environment and IDE files
+.env
+.venv
+env/
+venv/
+ENV/
+.idea/
+.vscode/
