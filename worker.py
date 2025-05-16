@@ -49,11 +49,17 @@ def custom_print(*args, **kwargs):
     current_filename = getattr(custom_print, 'current_filename', None)
     if current_filename:
         if "faces detected" in message:
-            processing_status.update_progress(current_filename, 20, message)
+            original_print(f"Processing progress for {current_filename}: 20% - {message}")
+            processing_status.progress[current_filename] = 20
+            processing_status.details[current_filename] = message
         elif "prefix table done" in message:
-            processing_status.update_progress(current_filename, 50, "Processing facial features...")
+            original_print(f"Processing progress for {current_filename}: 50% - Processing facial features...")
+            processing_status.progress[current_filename] = 50
+            processing_status.details[current_filename] = "Processing facial features..."
         elif "computed weights" in message:
-            processing_status.update_progress(current_filename, 80, "Finalizing image...")
+            original_print(f"Processing progress for {current_filename}: 80% - Finalizing image...")
+            processing_status.progress[current_filename] = 80
+            processing_status.details[current_filename] = "Finalizing image..."
 
 def process_image_async(filename):
     """Process an image in a background thread"""
